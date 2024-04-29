@@ -11,6 +11,9 @@ importers:
       '@element-plus/icons-vue':
         specifier: ^2.3.1
         version: 2.3.1(vue@3.4.25)
+      '@vueuse/core':
+        specifier: ^10.9.0
+        version: 10.9.0(vue@3.4.25)
       axios:
         specifier: ^1.6.8
         version: 1.6.8
@@ -59,7 +62,7 @@ importers:
         version: 1.75.0
       unplugin-auto-import:
         specifier: ^0.17.5
-        version: 0.17.5(@vueuse/core@9.13.0(vue@3.4.25))(rollup@4.16.4)
+        version: 0.17.5(@vueuse/core@10.9.0(vue@3.4.25))(rollup@4.16.4)
       unplugin-vue-components:
         specifier: ^0.26.0
         version: 0.26.0(@babel/parser@7.24.4)(rollup@4.16.4)(vue@3.4.25)
@@ -409,6 +412,9 @@ packages:
   '@types/web-bluetooth@0.0.16':
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==, tarball: https://registry.npmmirror.com/@types/web-bluetooth/-/web-bluetooth-0.0.16.tgz}
 
+  '@types/web-bluetooth@0.0.20':
+    resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==, tarball: https://registry.npmmirror.com/@types/web-bluetooth/-/web-bluetooth-0.0.20.tgz}
+
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==, tarball: https://registry.npmmirror.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz}
 
@@ -457,11 +463,20 @@ packages:
   '@vue/shared@3.4.25':
     resolution: {integrity: sha512-k0yappJ77g2+KNrIaF0FFnzwLvUBLUYr8VOwz+/6vLsmItFp51AcxLL7Ey3iPd7BIRyWPOcqUjMnm7OkahXllA==, tarball: https://registry.npmmirror.com/@vue/shared/-/shared-3.4.25.tgz}
 
+  '@vueuse/core@10.9.0':
+    resolution: {integrity: sha512-/1vjTol8SXnx6xewDEKfS0Ra//ncg4Hb0DaZiwKf7drgfMsKFExQ+FnnENcN6efPen+1kIzhLQoGSy0eDUVOMg==, tarball: https://registry.npmmirror.com/@vueuse/core/-/core-10.9.0.tgz}
+
   '@vueuse/core@9.13.0':
     resolution: {integrity: sha512-pujnclbeHWxxPRqXWmdkKV5OX4Wk4YeK7wusHqRwU0Q7EFusHoqNA/aPhB6KCh9hEqJkLAJo7bb0Lh9b+OIVzw==, tarball: https://registry.npmmirror.com/@vueuse/core/-/core-9.13.0.tgz}
 
+  '@vueuse/metadata@10.9.0':
+    resolution: {integrity: sha512-iddNbg3yZM0X7qFY2sAotomgdHK7YJ6sKUvQqbvwnf7TmaVPxS4EJydcNsVejNdS8iWCtDk+fYXr7E32nyTnGA==, tarball: https://registry.npmmirror.com/@vueuse/metadata/-/metadata-10.9.0.tgz}
+
   '@vueuse/metadata@9.13.0':
     resolution: {integrity: sha512-gdU7TKNAUVlXXLbaF+ZCfte8BjRJQWPCa2J55+7/h+yDtzw3vOoGQDRXzI6pyKyo6bXFT5/QoPE4hAknExjRLQ==, tarball: https://registry.npmmirror.com/@vueuse/metadata/-/metadata-9.13.0.tgz}
+
+  '@vueuse/shared@10.9.0':
+    resolution: {integrity: sha512-Uud2IWncmAfJvRaFYzv5OHDli+FbOzxiVEQdLCKQKLyhz94PIyFC3CHcH7EDMwIn8NPtD06+PNbC/PiO0LGLtw==, tarball: https://registry.npmmirror.com/@vueuse/shared/-/shared-10.9.0.tgz}
 
   '@vueuse/shared@9.13.0':
     resolution: {integrity: sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==, tarball: https://registry.npmmirror.com/@vueuse/shared/-/shared-9.13.0.tgz}
@@ -1629,6 +1644,8 @@ snapshots:
 
   '@types/web-bluetooth@0.0.16': {}
 
+  '@types/web-bluetooth@0.0.20': {}
+
   '@ungap/structured-clone@1.2.0': {}
 
   '@vitejs/plugin-vue@5.0.4(vite@5.2.10(sass@1.75.0))(vue@3.4.25)':
@@ -1700,6 +1717,16 @@ snapshots:
 
   '@vue/shared@3.4.25': {}
 
+  '@vueuse/core@10.9.0(vue@3.4.25)':
+    dependencies:
+      '@types/web-bluetooth': 0.0.20
+      '@vueuse/metadata': 10.9.0
+      '@vueuse/shared': 10.9.0(vue@3.4.25)
+      vue-demi: 0.14.7(vue@3.4.25)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
   '@vueuse/core@9.13.0(vue@3.4.25)':
     dependencies:
       '@types/web-bluetooth': 0.0.16
@@ -1710,7 +1737,16 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
+  '@vueuse/metadata@10.9.0': {}
+
   '@vueuse/metadata@9.13.0': {}
+
+  '@vueuse/shared@10.9.0(vue@3.4.25)':
+    dependencies:
+      vue-demi: 0.14.7(vue@3.4.25)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
 
   '@vueuse/shared@9.13.0(vue@3.4.25)':
     dependencies:
@@ -2551,7 +2587,7 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
-  unplugin-auto-import@0.17.5(@vueuse/core@9.13.0(vue@3.4.25))(rollup@4.16.4):
+  unplugin-auto-import@0.17.5(@vueuse/core@10.9.0(vue@3.4.25))(rollup@4.16.4):
     dependencies:
       '@antfu/utils': 0.7.7
       '@rollup/pluginutils': 5.1.0(rollup@4.16.4)
@@ -2562,7 +2598,7 @@ snapshots:
       unimport: 3.7.1(rollup@4.16.4)
       unplugin: 1.10.1
     optionalDependencies:
-      '@vueuse/core': 9.13.0(vue@3.4.25)
+      '@vueuse/core': 10.9.0(vue@3.4.25)
     transitivePeerDependencies:
       - rollup
 
