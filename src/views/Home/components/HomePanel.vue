@@ -14,9 +14,9 @@ defineProps({
           {{ title }}<small>{{ subTitle }}</small>
         </h3>
       </div>
+      <!--主体内容插槽-->
+      <slot></slot>
     </div>
-    <!--主体内容插槽-->
-    <slot></slot>
   </div>
 </template>
 

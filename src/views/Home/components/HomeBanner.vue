@@ -7,7 +7,6 @@ const bannerList = ref([])
 const getBannerPic = async () => {
   const res = await getBannerPicService(1)
   bannerList.value = res.data.result
-  console.log(bannerList.value)
 }
 getBannerPic()
 </script>
