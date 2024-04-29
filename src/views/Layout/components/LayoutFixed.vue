@@ -1,7 +1,11 @@
 <script setup>
 import { useScroll } from '@vueuse/core'
+import { useCategoryStore } from '@/stores/category.js'
 
+// 窗口垂直滚动距离
 const { y } = useScroll(window)
+
+const categoryStore = useCategoryStore()
 </script>
 
 <template>
@@ -10,35 +14,12 @@ const { y } = useScroll(window)
       <router-link class="logo" to="/" />
       <!-- 导航区域 -->
       <ul class="app-header-nav">
-        <li class="home">
-          <router-link to="/">首页</router-link>
-        </li>
-        <li>
-          <router-link to="/">居家</router-link>
-        </li>
-        <li>
-          <router-link to="/">美食</router-link>
-        </li>
-        <li>
-          <router-link to="/">服饰</router-link>
-        </li>
-        <li>
-          <router-link to="/">母婴</router-link>
-        </li>
-        <li>
-          <router-link to="/">个护</router-link>
-        </li>
-        <li>
-          <router-link to="/">严选</router-link>
-        </li>
-        <li>
-          <router-link to="/">数码</router-link>
-        </li>
-        <li>
-          <router-link to="/">运动</router-link>
-        </li>
-        <li>
-          <router-link to="/">杂项</router-link>
+        <li
+          v-for="item in categoryStore.categoryList"
+          :key="item.id"
+          class="home"
+        >
+          <router-link to="/">{{ item.name }}</router-link>
         </li>
       </ul>
 
@@ -103,6 +84,7 @@ const { y } = useScroll(window)
 
     .app-header-nav {
       display: flex;
+      justify-content: space-evenly;
       width: 820px;
       padding-left: 40px;
       z-index: 998;

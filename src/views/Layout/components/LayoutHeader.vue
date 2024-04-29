@@ -1,17 +1,8 @@
 <script setup>
-import { ref } from 'vue'
-import { layoutGetCategoryListService } from '@/apis/layout.js'
+import { useCategoryStore } from '@/stores/category.js'
 
 // 商品分类列表
-const categoryList = ref([])
-
-// 获取分类列表
-const getCategoryList = async () => {
-  const res = await layoutGetCategoryListService()
-  categoryList.value = res.data.result
-  console.log(categoryList.value)
-}
-getCategoryList()
+const categoryStore = useCategoryStore()
 </script>
 
 <template>
@@ -21,7 +12,11 @@ getCategoryList()
         <RouterLink to="/">小兔鲜</RouterLink>
       </h1>
       <ul class="app-header-nav">
-        <li v-for="item in categoryList" :key="item.id" class="home">
+        <li
+          v-for="item in categoryStore.categoryList"
+          :key="item.id"
+          class="home"
+        >
           <RouterLink to="/">{{ item.name }}</RouterLink>
         </li>
       </ul>
