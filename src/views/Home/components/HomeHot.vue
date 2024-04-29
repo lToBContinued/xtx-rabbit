@@ -1,7 +1,9 @@
-<script setup></script>
+<script setup>
+import HomePanel from '@/views/Home/components/HomePanel.vue'
+</script>
 
 <template>
-  <div>人气推荐</div>
+  <home-panel title="人气推荐"></home-panel>
 </template>
 
 <style lang="scss" scoped></style>
