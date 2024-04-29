@@ -11,7 +11,6 @@ export const useCategoryStore = defineStore('category', () => {
   const getCategoryList = async () => {
     const res = await layoutGetCategoryListService()
     categoryList.value = res.data.result
-    console.log(categoryList.value)
   }
 
   return {
