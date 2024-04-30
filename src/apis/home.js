@@ -22,3 +22,10 @@ export const getHotListService = () => {
     url: '/home/hot'
   })
 }
+
+// 获取全部分类
+export const getGoodsProductService = () => {
+  return request({
+    url: '/home/goods'
+  })
+}
