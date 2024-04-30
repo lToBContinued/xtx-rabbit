@@ -31,10 +31,10 @@ const { SecondCategoryList } = useCategory()
         <h3>全部分类</h3>
         <ul>
           <li v-for="i in SecondCategoryList.children" :key="i.id">
-            <RouterLink to="/">
+            <router-link :to="`/category/sub/${i.id}`">
               <img :src="i.picture" />
               <p>{{ i.name }}</p>
-            </RouterLink>
+            </router-link>
           </li>
         </ul>
       </div>
@@ -108,7 +108,6 @@ const { SecondCategoryList } = useCategory()
 
           &:hover {
             color: $xtxColor;
-            color: burlywood;
           }
         }
       }
