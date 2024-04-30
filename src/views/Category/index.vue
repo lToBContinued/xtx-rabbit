@@ -1,7 +1,7 @@
 <script setup>
 import { ArrowRight } from '@element-plus/icons-vue'
 import { getSecondCategoryService } from '@/apis/category.js'
-import { useRoute } from 'vue-router'
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { getBannerPicService } from '@/apis/home.js'
 import GoodsItem from '@/views/Home/components/GoodsItem.vue'
@@ -9,8 +9,9 @@ import GoodsItem from '@/views/Home/components/GoodsItem.vue'
 // 面包屑导航
 const route = useRoute()
 const SecondCategoryList = ref({})
-const getSecondCategory = async () => {
-  const res = await getSecondCategoryService(route.params.id)
+const getSecondCategory = async (id = route.params.id) => {
+  // id使用默认参数的形式，初次进入页面默认渲染
+  const res = await getSecondCategoryService(id)
   SecondCategoryList.value = res.data.result
 }
 getSecondCategory()
@@ -22,6 +23,11 @@ const getBannerPic = async () => {
   bannerList.value = res.data.result
 }
 getBannerPic()
+
+// 在路由参数变化的时候，把分类接口数据重新发送
+onBeforeRouteUpdate((to) => {
+  getSecondCategory(to.params.id)
+})
 </script>
 
 <template>
@@ -122,6 +128,7 @@ getBannerPic()
 
           &:hover {
             color: $xtxColor;
+            color: burlywood;
           }
         }
       }
