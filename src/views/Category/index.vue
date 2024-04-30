@@ -4,6 +4,7 @@ import { getSecondCategoryService } from '@/apis/category.js'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { getBannerPicService } from '@/apis/home.js'
+import GoodsItem from '@/views/Home/components/GoodsItem.vue'
 
 // 面包屑导航
 const route = useRoute()
@@ -26,17 +27,42 @@ getBannerPic()
 <template>
   <div class="top-category">
     <div class="container">
+      <!--面包屑导航-->
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>{{ SecondCategoryList.name }}</el-breadcrumb-item>
       </el-breadcrumb>
-
+      <!--轮播图-->
       <div class="home-banner">
         <el-carousel height="500px">
           <el-carousel-item v-for="item in bannerList" :key="item.id">
             <img :src="item.imgUrl" alt="" />
           </el-carousel-item>
         </el-carousel>
+      </div>
+      <!--分类模板-->
+      <div class="sub-list">
+        <h3>全部分类</h3>
+        <ul>
+          <li v-for="i in SecondCategoryList.children" :key="i.id">
+            <RouterLink to="/">
+              <img :src="i.picture" />
+              <p>{{ i.name }}</p>
+            </RouterLink>
+          </li>
+        </ul>
+      </div>
+      <div
+        v-for="item in SecondCategoryList.children"
+        :key="item.id"
+        class="ref-goods"
+      >
+        <div class="head">
+          <h3>- {{ item.name }}-</h3>
+        </div>
+        <div class="body">
+          <GoodsItem v-for="good in item.goods" :key="good.id" :good="good" />
+        </div>
       </div>
     </div>
   </div>
