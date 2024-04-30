@@ -5,7 +5,7 @@ import { ref } from 'vue'
 // 获取banner数据
 const bannerList = ref([])
 const getBannerPic = async () => {
-  const res = await getBannerPicService(1)
+  const res = await getBannerPicService('1')
   bannerList.value = res.data.result
 }
 getBannerPic()

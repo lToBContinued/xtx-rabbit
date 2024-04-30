@@ -3,15 +3,24 @@ import { ArrowRight } from '@element-plus/icons-vue'
 import { getSecondCategoryService } from '@/apis/category.js'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
+import { getBannerPicService } from '@/apis/home.js'
 
+// 面包屑导航
 const route = useRoute()
 const SecondCategoryList = ref({})
 const getSecondCategory = async () => {
   const res = await getSecondCategoryService(route.params.id)
   SecondCategoryList.value = res.data.result
-  console.log(SecondCategoryList.value)
 }
 getSecondCategory()
+
+// 获取banner数据
+const bannerList = ref([])
+const getBannerPic = async () => {
+  const res = await getBannerPicService('2')
+  bannerList.value = res.data.result
+}
+getBannerPic()
 </script>
 
 <template>
@@ -21,6 +30,14 @@ getSecondCategory()
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>{{ SecondCategoryList.name }}</el-breadcrumb-item>
       </el-breadcrumb>
+
+      <div class="home-banner">
+        <el-carousel height="500px">
+          <el-carousel-item v-for="item in bannerList" :key="item.id">
+            <img :src="item.imgUrl" alt="" />
+          </el-carousel-item>
+        </el-carousel>
+      </div>
     </div>
   </div>
 </template>
@@ -29,6 +46,17 @@ getSecondCategory()
 .top-category {
   .container {
     margin-top: 20px;
+
+    .home-banner {
+      width: 1240px;
+      height: 500px;
+      margin: 20px auto 0;
+
+      img {
+        width: 100%;
+        height: 500px;
+      }
+    }
   }
 
   h3 {
