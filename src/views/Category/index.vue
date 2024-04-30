@@ -1,33 +1,13 @@
 <script setup>
 import { ArrowRight } from '@element-plus/icons-vue'
-import { getSecondCategoryService } from '@/apis/category.js'
-import { onBeforeRouteUpdate, useRoute } from 'vue-router'
-import { ref } from 'vue'
-import { getBannerPicService } from '@/apis/home.js'
 import GoodsItem from '@/views/Home/components/GoodsItem.vue'
-
-// 面包屑导航
-const route = useRoute()
-const SecondCategoryList = ref({})
-const getSecondCategory = async (id = route.params.id) => {
-  // id使用默认参数的形式，初次进入页面默认渲染
-  const res = await getSecondCategoryService(id)
-  SecondCategoryList.value = res.data.result
-}
-getSecondCategory()
+import { useBanner } from '@/views/Category/composables/useBanner.js'
+import { useCategory } from '@/views/Category/composables/useCategory.js'
 
 // 获取banner数据
-const bannerList = ref([])
-const getBannerPic = async () => {
-  const res = await getBannerPicService('2')
-  bannerList.value = res.data.result
-}
-getBannerPic()
-
-// 在路由参数变化的时候，把分类接口数据重新发送
-onBeforeRouteUpdate((to) => {
-  getSecondCategory(to.params.id)
-})
+const { bannerList } = useBanner()
+// 导航
+const { SecondCategoryList } = useCategory()
 </script>
 
 <template>
