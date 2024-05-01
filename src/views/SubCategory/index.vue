@@ -17,7 +17,7 @@ const getCategoryFilter = async () => {
 getCategoryFilter()
 
 // 获取基础列表数据
-const GoodsList = ref([])
+const goodsList = ref([])
 const reqData = ref({
   categoryId: route.params.id,
   page: 1,
@@ -26,11 +26,28 @@ const reqData = ref({
 })
 const getGoodsCategory = async () => {
   const res = await getGoodsCategoryService(reqData.value)
-  console.log(res)
-  GoodsList.value = res.data.result.items
-  // console.log('GoodsList是', GoodsList.value)
+  goodsList.value = res.data.result.items
 }
 getGoodsCategory()
+
+// tab栏切换
+const tabChange = () => {
+  reqData.value.page = 1
+  getGoodsCategory()
+}
+
+// 页面无限加载
+const disabled = ref(false)
+const load = async () => {
+  // 获取下一页数据
+  reqData.value.page++
+  const res = await getGoodsCategoryService(reqData.value)
+  goodsList.value = [...goodsList.value, ...res.data.result.items]
+  // 加载完毕 停止监听
+  if (res.data.result.items.length === 0) {
+    disabled.value = true
+  }
+}
 </script>
 
 <template>
@@ -48,14 +65,19 @@ getGoodsCategory()
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-      <el-tabs>
+      <el-tabs v-model="reqData.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div
+        v-infinite-scroll="load"
+        :infinite-scroll-disabled="disabled"
+        class="body"
+        infinite-scroll-distance="50"
+      >
         <goods-item
-          v-for="item in GoodsList"
+          v-for="item in goodsList"
           :key="item.id"
           :good="item"
         ></goods-item>
