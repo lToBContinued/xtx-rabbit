@@ -26,7 +26,6 @@ const getHotList = async () => {
     limit: 3
   })
   hotList.value = res.data.result
-  console.log(res.data.result)
 }
 getHotList()
 </script>
