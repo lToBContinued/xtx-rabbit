@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { userLoginService } from '@/apis/user.js'
+import { ElMessage } from 'element-plus'
+import 'element-plus/theme-chalk/el-message.css'
+import { useRouter } from 'vue-router'
 
 const formRef = ref(null)
 const formModel = ref({
@@ -7,6 +11,7 @@ const formModel = ref({
   password: '',
   agree: ''
 })
+// 表单验证规则
 const rules = {
   account: [
     { required: true, message: '用户名不能为空', trigger: 'blur' },
@@ -38,11 +43,17 @@ const rules = {
   ]
 }
 
-const login = async () => {
-  await formRef.value.validate((valid) => {
+const router = useRouter()
+const login = () => {
+  const { account, password } = formModel.value
+  formRef.value.validate(async (valid) => {
     // valid：所有表单项都通过校验，才为true
     if (valid) {
       // 登录
+      const res = await userLoginService({ account, password })
+      console.log(res)
+      ElMessage.success('登录成功')
+      router.replace({ path: '/' })
     }
   })
 }
