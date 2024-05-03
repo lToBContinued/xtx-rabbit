@@ -1,9 +1,8 @@
 <script setup>
-import { getDetailService } from '@/apis/detail.js'
-import { useRoute } from 'vue-router'
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { getDetailService } from '@/apis/detail.js'
 import DetailHot from '@/views/Detail/components/DetailHot.vue'
-import ImageView from '@/components/ImageView.vue'
 
 const route = useRoute()
 const goods = ref({})
@@ -12,6 +11,11 @@ const getDetail = async () => {
   goods.value = res.data.result
 }
 getDetail()
+
+// sku规则被操作时
+const skuChange = () => {
+  console.log('sku')
+}
 </script>
 
 <template>
@@ -44,7 +48,7 @@ getDetail()
           <div class="goods-info">
             <div class="media">
               <!-- 图片预览区 -->
-              <image-view :imageList="goods.mainPictures"></image-view>
+              <xtx-image-view :imageList="goods.mainPictures"></xtx-image-view>
               <!-- 统计数量 -->
               <ul class="goods-sales">
                 <li>
@@ -93,12 +97,12 @@ getDetail()
                 </dl>
               </div>
               <!-- sku组件 -->
-
+              <xtx-sku :goods="goods" @change="skuChange"></xtx-sku>
               <!-- 数据组件 -->
 
               <!-- 按钮组件 -->
               <div>
-                <el-button class="btn" size="large"> 加入购物车 </el-button>
+                <el-button class="btn" size="large"> 加入购物车</el-button>
               </div>
             </div>
           </div>
