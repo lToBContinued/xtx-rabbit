@@ -7,7 +7,8 @@ export const useCartStore = defineStore(
   () => {
     // 购物车列表
     const cartList = ref([])
-    // 添加购物车操作
+
+    // 添加购物车
     const addCart = (goods) => {
       // 通过匹配传递过来的商品对象中的skuId能不能在cartList中找到，找到了就是添加过
       const item = cartList.value.find((item) => goods.skuId === item.skuId)
@@ -19,9 +20,20 @@ export const useCartStore = defineStore(
         cartList.value.push(goods)
       }
     }
+
+    // 删除购物车
+    const delCart = (skuId) => {
+      // splice方法删除
+      const idx = cartList.value.findIndex((item) => item.skuId === skuId)
+      cartList.value.splice(idx, 1)
+      // filter方法删除
+      // cartList.value = cartList.value.filter((item) => item.skuId !== skuId)
+    }
+
     return {
       cartList,
-      addCart
+      addCart,
+      delCart
     }
   },
   { persist: true }
