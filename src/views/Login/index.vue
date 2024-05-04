@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import { userLoginService } from '@/apis/user.js'
 import { ElMessage } from 'element-plus'
 import 'element-plus/theme-chalk/el-message.css'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 
 const formRef = ref(null)
 const formModel = ref({
@@ -50,8 +52,7 @@ const login = () => {
     // valid：所有表单项都通过校验，才为true
     if (valid) {
       // 登录
-      const res = await userLoginService({ account, password })
-      console.log(res)
+      await userStore.getUserInfo({ account, password })
       ElMessage.success('登录成功')
       router.replace({ path: '/' })
     }
