@@ -36,6 +36,10 @@ export const useCartStore = defineStore(
       const item = cartList.value.find((item) => item.skuId === skuId)
       item.selected = selected
     }
+    // 全选功能
+    const allCheck = (selected) => {
+      cartList.value.forEach((item) => (item.selected = selected))
+    }
 
     // 计算属性
     // 商品总数
@@ -52,6 +56,10 @@ export const useCartStore = defineStore(
         }, 0)
         .toFixed(2)
     })
+    // 是否全选
+    const isAll = computed(() => {
+      return cartList.value.every((item) => item.selected === true)
+    })
 
     return {
       cartList,
@@ -59,7 +67,9 @@ export const useCartStore = defineStore(
       delCart,
       allCount,
       allPrice,
-      singleCheck
+      singleCheck,
+      isAll,
+      allCheck
     }
   },
   { persist: true }
