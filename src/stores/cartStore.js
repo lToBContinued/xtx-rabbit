@@ -1,23 +1,38 @@
 // 管理购物车数据
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { useUserStore } from './user.js'
+import {
+  cartGetNewCartListService,
+  cartInsertCartService
+} from '@/apis/cart.js'
 
 export const useCartStore = defineStore(
   'cart',
   () => {
+    const userStore = useUserStore()
+    const isLogin = computed(() => userStore.userInfo.token)
     // 购物车列表
     const cartList = ref([])
 
     // 添加购物车
-    const addCart = (goods) => {
-      // 通过匹配传递过来的商品对象中的skuId能不能在cartList中找到，找到了就是添加过
-      const item = cartList.value.find((item) => goods.skuId === item.skuId)
-      if (item) {
-        // 已添加过 - count+1
-        item.count++
+    const addCart = async (goods) => {
+      if (isLogin.value) {
+        // 登录之后的加入购物车逻辑
+        const { skuId, count } = goods
+        await cartInsertCartService({ skuId, count })
+        const res = await cartGetNewCartListService()
+        cartList.value = res.data.result
       } else {
-        // 没有添加过 - 直接push
-        cartList.value.push(goods)
+        // 通过匹配传递过来的商品对象中的skuId能不能在cartList中找到，找到了就是添加过
+        const item = cartList.value.find((item) => goods.skuId === item.skuId)
+        if (item) {
+          // 已添加过 - count+1
+          item.count++
+        } else {
+          // 没有添加过 - 直接push
+          cartList.value.push(goods)
+        }
       }
     }
 
@@ -48,7 +63,6 @@ export const useCartStore = defineStore(
         return sum + item.count
       }, 0)
     })
-
     // 商品总价
     const allPrice = computed(() => {
       return cartList.value
@@ -57,12 +71,10 @@ export const useCartStore = defineStore(
         }, 0)
         .toFixed(2)
     })
-
     // 是否全选
     const isAll = computed(() => {
       return cartList.value.every((item) => item.selected === true)
     })
-
     // 已选择数量
     const selectCount = computed(() => {
       return cartList.value
