@@ -1,5 +1,5 @@
 <script setup>
-import { useCategoryStore } from '@/stores/category.js'
+import { useCategoryStore } from '@/stores/categoryStore.js'
 import HeaderCart from '@/views/Layout/components/HeaderCart.vue'
 
 // 商品分类列表

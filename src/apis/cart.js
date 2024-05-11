@@ -18,3 +18,12 @@ export const cartGetNewCartListService = () => {
     url: '/member/cart'
   })
 }
+
+// 删除购物车
+export const cartDelCartService = (ids) => {
+  return request({
+    url: '/member/cart',
+    methods: 'DELETE',
+    data: { ids }
+  })
+}
