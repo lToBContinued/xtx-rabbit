@@ -23,7 +23,16 @@ export const cartGetNewCartListService = () => {
 export const cartDelCartService = (ids) => {
   return request({
     url: '/member/cart',
-    methods: 'DELETE',
+    method: 'DELETE',
     data: { ids }
+  })
+}
+
+// 合并购物车
+export const cartMergeCartService = (data) => {
+  return request({
+    url: '/member/cart/merge',
+    method: 'POST',
+    data
   })
 }

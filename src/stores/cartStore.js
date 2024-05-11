@@ -7,6 +7,7 @@ import {
   cartGetNewCartListService,
   cartInsertCartService
 } from '@/apis/cart.js'
+import { ElMessage } from 'element-plus'
 
 export const useCartStore = defineStore(
   'cart',
@@ -29,15 +30,18 @@ export const useCartStore = defineStore(
         const { skuId, count } = goods
         await cartInsertCartService({ skuId, count })
         await updateNewList()
+        ElMessage.success('添加购物车成功')
       } else {
         // 通过匹配传递过来的商品对象中的skuId能不能在cartList中找到，找到了就是添加过
         const item = cartList.value.find((item) => goods.skuId === item.skuId)
         if (item) {
           // 已添加过 - count+1
           item.count++
+          ElMessage.success('添加购物车成功')
         } else {
           // 没有添加过 - 直接push
           cartList.value.push(goods)
+          ElMessage.success('添加购物车成功')
         }
       }
     }
@@ -47,10 +51,12 @@ export const useCartStore = defineStore(
       if (isLogin.value) {
         await cartDelCartService([skuId])
         await updateNewList()
+        ElMessage.success('删除购物车成功')
       } else {
         // splice方法删除
         const idx = cartList.value.findIndex((item) => item.skuId === skuId)
         cartList.value.splice(idx, 1)
+        ElMessage.success('删除购物车成功')
         // filter方法删除
         // cartList.value = cartList.value.filter((item) => item.skuId !== skuId)
       }
@@ -107,16 +113,17 @@ export const useCartStore = defineStore(
 
     return {
       cartList,
-      addCart,
-      delCart,
       allCount,
       allPrice,
-      singleCheck,
       isAll,
-      allCheck,
       selectCount,
       selectPrice,
-      clearCart
+      addCart,
+      delCart,
+      singleCheck,
+      allCheck,
+      clearCart,
+      updateNewList
     }
   },
   { persist: true }
