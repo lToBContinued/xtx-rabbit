@@ -14,6 +14,20 @@ const getCheckInfo = async () => {
   )
 }
 getCheckInfo()
+
+// 控制弹窗打开
+const showDialog = ref(false)
+
+// 切换地址
+const activeAddress = ref({})
+const switchAddress = (item) => {
+  activeAddress.value = item
+}
+const confirm = () => {
+  curAddress.value = activeAddress.value
+  showDialog.value = false
+  activeAddress.value = {}
+}
 </script>
 
 <template>
@@ -40,12 +54,12 @@ getCheckInfo()
               </ul>
             </div>
             <div class="action">
-              <el-button size="large" @click="toggleFlag = true"
-                >切换地址</el-button
-              >
-              <el-button size="large" @click="addFlag = true"
-                >添加地址</el-button
-              >
+              <el-button size="large" @click="showDialog = true">
+                切换地址
+              </el-button>
+              <el-button size="large" @click="addFlag = true">
+                添加地址
+              </el-button>
             </div>
           </div>
         </div>
@@ -129,6 +143,31 @@ getCheckInfo()
     </div>
   </div>
   <!-- 切换地址 -->
+  <el-dialog v-model="showDialog" center title="切换收货地址" width="30%">
+    <div class="addressWrapper">
+      <div
+        v-for="item in checkInfo.userAddresses"
+        :key="item.id"
+        :class="{ active: activeAddress.id === item.id }"
+        class="text item"
+        @click="switchAddress(item)"
+      >
+        <ul>
+          <li>
+            <span>收<i />货<i />人：</span>{{ item.receiver }}
+          </li>
+          <li><span>联系方式：</span>{{ item.contact }}</li>
+          <li><span>收货地址：</span>{{ item.fullLocation + item.address }}</li>
+        </ul>
+      </div>
+    </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="showDialog = false">取消</el-button>
+        <el-button type="primary" @click="confirm">确定</el-button>
+      </span>
+    </template>
+  </el-dialog>
   <!-- 添加地址 -->
 </template>
 
