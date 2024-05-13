@@ -1,9 +1,18 @@
 <script setup>
-import { checkoutGetCheckInfoService } from '@/apis/checkout.js'
+import {
+  checkoutGetCheckInfoService,
+  createOrderService
+} from '@/apis/checkout.js'
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cartStore.js'
+
+const router = useRouter()
 
 const checkInfo = ref({}) // 订单对象
 const curAddress = ref({}) // 地址对象
+const cartStore = useCartStore()
 
 const getCheckInfo = async () => {
   const res = await checkoutGetCheckInfoService()
@@ -27,6 +36,29 @@ const confirm = () => {
   curAddress.value = activeAddress.value
   showDialog.value = false
   activeAddress.value = {}
+}
+
+// 提交订单
+const createOrder = async () => {
+  const res = await createOrderService({
+    deliveryTimeType: 1,
+    payType: 1,
+    payChannel: 1,
+    buyerMessage: '',
+    goods: checkInfo.value.goods.map((item) => {
+      return {
+        skuId: item.skuId,
+        count: item.count
+      }
+    }),
+    addressId: curAddress.value.id
+  })
+  const orderId = res.data.result.id
+  await router.replace({
+    path: `/pay/${orderId}`
+  })
+  cartStore.clearCart()
+  ElMessage.success('提交订单成功')
 }
 </script>
 
@@ -137,7 +169,9 @@ const confirm = () => {
         </div>
         <!-- 提交订单 -->
         <div class="submit">
-          <el-button size="large" type="primary">提交订单</el-button>
+          <el-button size="large" type="primary" @click="createOrder">
+            提交订单
+          </el-button>
         </div>
       </div>
     </div>

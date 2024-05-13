@@ -101,6 +101,9 @@ const allCheck = (selected) => {
         </div>
         <div class="total">
           <el-button
+            :disabled="
+              cartStore.cartList.every((item) => item.selected === false)
+            "
             size="large"
             type="primary"
             @click="$router.push('/checkout')"

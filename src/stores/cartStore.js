@@ -77,7 +77,6 @@ export const useCartStore = defineStore(
     const allCheck = (selected) => {
       cartList.value.forEach((item) => (item.selected = selected))
     }
-
     // 计算属性--------------------------------------------------
     // 商品总数
     const allCount = computed(() => {
