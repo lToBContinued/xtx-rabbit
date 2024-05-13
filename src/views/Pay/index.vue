@@ -1,5 +1,19 @@
 <script setup>
+import { payGetOrderService } from '@/apis/pay.js'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+// 订单数据
 const payInfo = {}
+
+// 获取订单数据
+const getPayInfo = async () => {
+  const id = route.params.id
+  const res = await payGetOrderService(id)
+  payInfo.value = res.data.result
+  console.log(payInfo.value)
+}
+getPayInfo()
 </script>
 
 <template>
