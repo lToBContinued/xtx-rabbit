@@ -1,19 +1,27 @@
 <script setup>
 import { payGetOrderService } from '@/apis/pay.js'
 import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 
 const route = useRoute()
 // 订单数据
-const payInfo = {}
+const payInfo = ref({})
 
 // 获取订单数据
 const getPayInfo = async () => {
-  const id = route.params.id
-  const res = await payGetOrderService(id)
+  const res = await payGetOrderService(route.params.id)
   payInfo.value = res.data.result
   console.log(payInfo.value)
 }
 getPayInfo()
+
+// 跳转支付
+// 携带订单id以及回调地址跳转到支付地址（get）
+// 支付地址
+const baseURL = 'http://pcapi-xiaotuxian-front-devtest.itheima.net/'
+const backURL = 'http://localhost:5173/paycallback'
+const redirectUrl = encodeURIComponent(backURL)
+const payUrl = `${baseURL}pay/aliPay?orderId=${route.params.id}&redirect=${redirectUrl}`
 </script>
 
 <template>
