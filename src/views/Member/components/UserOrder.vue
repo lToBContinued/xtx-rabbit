@@ -20,11 +20,17 @@ const getOrderList = async () => {
   orderList.value = res.data.result.items
 }
 getOrderList()
+
+// tab栏切换
+const tabChange = (type) => {
+  params.value.orderState = type.index
+  getOrderList()
+}
 </script>
 
 <template>
   <div class="order-container">
-    <el-tabs>
+    <el-tabs @tab-click="tabChange">
       <!-- tab切换 -->
       <el-tab-pane
         v-for="item in tabTypes"
