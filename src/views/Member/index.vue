@@ -6,7 +6,7 @@
       <div class="user-manage">
         <h4>我的账户</h4>
         <div class="links">
-          <router-link to="/member/user">个人中心</router-link>
+          <router-link to="/member">个人中心</router-link>
         </div>
         <h4>交易管理</h4>
         <div class="links">
