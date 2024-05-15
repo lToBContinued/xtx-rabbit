@@ -10,3 +10,12 @@ export const userLoginService = ({ account, password }) => {
     }
   })
 }
+
+export const userGetLikeListService = ({ limit = 4 }) => {
+  return request({
+    url: '/goods/relevant',
+    params: {
+      limit
+    }
+  })
+}
