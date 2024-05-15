@@ -26,6 +26,7 @@ getCheckInfo()
 
 // 控制弹窗打开
 const showDialog = ref(false)
+const addFlag = ref(false)
 
 // 切换地址
 const activeAddress = ref({})
@@ -36,6 +37,28 @@ const confirm = () => {
   curAddress.value = activeAddress.value
   showDialog.value = false
   activeAddress.value = {}
+}
+
+// 添加地址表单校验规则
+const formRef = ref(null)
+const rules = {
+  receiver: [{ required: true, message: '姓名不能为空', trigger: 'blur' }]
+}
+// 添加地址
+const addressForm = ref({
+  receiver: '',
+  contact: '',
+  provinceCode: '',
+  cityCode: '',
+  countyCode: '',
+  address: '',
+  postalCode: '',
+  addressTags: '',
+  isDefault: 0,
+  fullLocation: ''
+})
+const confirmAdd = () => {
+  addFlag.value = false
 }
 
 // 提交订单
@@ -203,6 +226,59 @@ const createOrder = async () => {
     </template>
   </el-dialog>
   <!-- 添加地址 -->
+  <el-dialog v-model="addFlag" center title="添加收货地址" width="50%">
+    <div class="form">
+      <el-form
+        ref="formRef"
+        :model="addressForm"
+        :rules="rules"
+        label-position="right"
+        label-width="auto"
+        style="max-width: 500px"
+      >
+        <el-form-item label="姓名" prop="receiver">
+          <el-input v-model="addressForm.receiver"></el-input>
+        </el-form-item>
+        <el-form-item label="联系方式" prop="contact">
+          <el-input v-model="addressForm.contact"></el-input>
+        </el-form-item>
+        <el-form-item label="省份编码" prop="provinceCode">
+          <el-input v-model="addressForm.provinceCode"></el-input>
+        </el-form-item>
+        <el-form-item label="城市编码" prop="cityCode">
+          <el-input v-model="addressForm.cityCode"></el-input>
+        </el-form-item>
+        <el-form-item label="地区编码" prop="countyCode">
+          <el-input v-model="addressForm.countyCode"></el-input>
+        </el-form-item>
+        <el-form-item label="详细地址" prop="address">
+          <el-input v-model="addressForm.address"></el-input>
+        </el-form-item>
+        <el-form-item label="邮政编码" prop="postalCode">
+          <el-input v-model="addressForm.postalCode"></el-input>
+        </el-form-item>
+        <el-form-item label="地址标签" prop="addressTags">
+          <el-input v-model="addressForm.addressTags"></el-input>
+        </el-form-item>
+        <el-form-item label="收货地址是否默认" prop="isDefault">
+          <el-radio-group v-model="addressForm.isDefault" class="ml-4">
+            <el-radio size="large" value="0">是</el-radio>
+            <el-radio size="large" value="1">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="完整地址" prop="fullLocation">
+          <el-input v-model="addressForm.fullLocation"></el-input>
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addFlag = false">取消</el-button>
+        <el-button type="primary" @click="confirmAdd">确定</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>
@@ -416,5 +492,11 @@ const createOrder = async () => {
       line-height: 30px;
     }
   }
+}
+
+.form {
+  width: 500px;
+  height: 100%;
+  margin: 0 auto;
 }
 </style>

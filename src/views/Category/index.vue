@@ -18,14 +18,26 @@ const { SecondCategoryList } = useCategory()
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>{{ SecondCategoryList.name }}</el-breadcrumb-item>
       </el-breadcrumb>
+
       <!--轮播图-->
-      <div class="home-banner">
-        <el-carousel height="500px">
-          <el-carousel-item v-for="item in bannerList" :key="item.id">
-            <img :src="item.imgUrl" alt="" />
-          </el-carousel-item>
-        </el-carousel>
-      </div>
+      <el-skeleton :loading="bannerList.length === 0" :throttle="500" animated>
+        <template #template>
+          <el-skeleton-item
+            style="width: 1240px; height: 500px; margin: 20px auto 0"
+            variant="image"
+          ></el-skeleton-item>
+        </template>
+        <template #default>
+          <div class="home-banner">
+            <el-carousel height="500px">
+              <el-carousel-item v-for="item in bannerList" :key="item.id">
+                <img :src="item.imgUrl" alt="" />
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+        </template>
+      </el-skeleton>
+
       <!--分类模板-->
       <div class="sub-list">
         <h3>全部分类</h3>

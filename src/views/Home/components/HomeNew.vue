@@ -15,11 +15,39 @@ getNewList()
   <home-panel subTitle="新鲜出炉&nbsp;品质靠谱" title="新鲜好物">
     <ul class="goods-list">
       <li v-for="item in newList" :key="item.id">
-        <RouterLink :to="`/detail/${item.id}`">
-          <img :src="item.picture" alt="" />
-          <p class="name">{{ item.name }}</p>
-          <p class="price">&yen;{{ item.price }}</p>
-        </RouterLink>
+        <el-skeleton
+          :loading="newList.length === 0"
+          animated
+          style="width: 240px"
+        >
+          <template #template>
+            <el-skeleton-item
+              style="width: 306px; height: 300px"
+              variant="image"
+            />
+            <div style="padding: 14px">
+              <el-skeleton-item style="width: 50%" variant="h3" />
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  margin-top: 16px;
+                  height: 16px;
+                "
+              >
+                <el-skeleton-item style="margin-right: 16px" variant="text" />
+                <el-skeleton-item style="width: 30%" variant="text" />
+              </div>
+            </div>
+          </template>
+          <template #default>
+            <RouterLink :to="`/detail/${item.id}`">
+              <img :src="item.picture" alt="" />
+              <p class="name">{{ item.name }}</p>
+              <p class="price">&yen;{{ item.price }}</p>
+            </RouterLink>
+          </template>
+        </el-skeleton>
       </li>
     </ul>
   </home-panel>

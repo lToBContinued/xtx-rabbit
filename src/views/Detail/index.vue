@@ -49,139 +49,170 @@ const addCart = () => {
 </script>
 
 <template>
-  <div class="xtx-goods-page">
-    <div v-if="goods.details" class="container">
-      <div class="bread-container">
-        <el-breadcrumb separator=">">
-          <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <!--
-              错误原因：goods一开始是{}，{}.categories → undefined
-              1.可选链的语法“?.”
-              2.v-if手动控制渲染时机，保证只有数据存在才渲染
-          -->
-          <el-breadcrumb-item
-            :to="{ path: `/category/${goods.categories[1].id}` }"
-          >
-            {{ goods.categories[1].name }}
-          </el-breadcrumb-item>
-          <el-breadcrumb-item
-            :to="{ path: `/category/sub/${goods.categories[0].id}` }"
-          >
-            {{ goods.categories[0].name }}
-          </el-breadcrumb-item>
-          <el-breadcrumb-item>抓绒保暖，毛毛虫子儿童运动鞋</el-breadcrumb-item>
-        </el-breadcrumb>
+  <el-skeleton :loading="Object.keys(goods).length === 0" animated>
+    <template #template>
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 30px auto;
+          width: 1240px;
+          height: 600px;
+          background-color: #fff;
+        "
+      >
+        <div class="loader"></div>
       </div>
-      <!-- 商品信息 -->
-      <div class="info-container">
-        <div>
-          <div class="goods-info">
-            <div class="media">
-              <!-- 图片预览区 -->
-              <xtx-image-view :imageList="goods.mainPictures"></xtx-image-view>
-              <!-- 统计数量 -->
-              <ul class="goods-sales">
-                <li>
-                  <p>销量人气</p>
-                  <p>{{ goods.salesCount }}+</p>
-                  <p><i class="iconfont icon-task-filling"></i>销量人气</p>
-                </li>
-                <li>
-                  <p>商品评价</p>
-                  <p>{{ goods.commentCount }}+</p>
-                  <p><i class="iconfont icon-comment-filling"></i>查看评价</p>
-                </li>
-                <li>
-                  <p>收藏人气</p>
-                  <p>{{ goods.collectCount }}+</p>
-                  <p><i class="iconfont icon-favorite-filling"></i>收藏商品</p>
-                </li>
-                <li>
-                  <p>品牌信息</p>
-                  <p>{{ goods.brand.name }}+</p>
-                  <p><i class="iconfont icon-dynamic-filling"></i>品牌主页</p>
-                </li>
-              </ul>
-            </div>
-            <div class="spec">
-              <!-- 商品信息区 -->
-              <p class="g-name">{{ goods.name }}</p>
-              <p class="g-desc">{{ goods.desc }}</p>
-              <p class="g-price">
-                <span>{{ goods.oldPrice }}</span>
-                <span> {{ goods.price }}</span>
-              </p>
-              <div class="g-service">
-                <dl>
-                  <dt>促销</dt>
-                  <dd>12月好物放送，App领券购买直降120元</dd>
-                </dl>
-                <dl>
-                  <dt>服务</dt>
-                  <dd>
-                    <span>无忧退货</span>
-                    <span>快速退款</span>
-                    <span>免费包邮</span>
-                    <a href="javascript:">了解详情</a>
-                  </dd>
-                </dl>
-              </div>
-              <!-- sku组件 -->
-              <xtx-sku :goods="goods" @change="skuChange"></xtx-sku>
-              <!-- 数据组件 -->
-              <el-input-number
-                v-model="count"
-                :min="1"
-                @change="countChange"
-              ></el-input-number>
-              <!-- 按钮组件 -->
-              <div>
-                <el-button class="btn" size="large" @click="addCart">
-                  加入购物车</el-button
-                >
-              </div>
-            </div>
+    </template>
+    <template #default>
+      <div v-if="goods.details" class="xtx-goods-page">
+        <div class="container">
+          <div class="bread-container">
+            <!--面包屑导航-->
+            <el-breadcrumb separator=">">
+              <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+              <!--
+                        错误原因：goods一开始是{}，{}.categories → undefined
+                        1.可选链的语法“?.”
+                        2.v-if手动控制渲染时机，保证只有数据存在才渲染
+                    -->
+              <el-breadcrumb-item
+                :to="{ path: `/category/${goods.categories[1].id}` }"
+              >
+                {{ goods.categories[1].name }}
+              </el-breadcrumb-item>
+              <el-breadcrumb-item
+                :to="{ path: `/category/sub/${goods.categories[0].id}` }"
+              >
+                {{ goods.categories[0].name }}
+              </el-breadcrumb-item>
+              <el-breadcrumb-item
+                >抓绒保暖，毛毛虫子儿童运动鞋</el-breadcrumb-item
+              >
+            </el-breadcrumb>
           </div>
-          <div class="goods-footer">
-            <div class="goods-article">
-              <!-- 商品详情 -->
-              <div class="goods-tabs">
-                <nav>
-                  <a>商品详情</a>
-                </nav>
-                <div class="goods-detail">
-                  <!-- 属性 -->
-                  <ul class="attrs">
-                    <li
-                      v-for="item in goods.details.properties"
-                      :key="item.value"
-                    >
-                      <span class="dt">{{ item.name }}</span>
-                      <span class="dd">{{ item.value }}</span>
+
+          <!-- 商品信息 -->
+          <div class="info-container">
+            <div>
+              <div class="goods-info">
+                <div class="media">
+                  <!-- 图片预览区 -->
+                  <xtx-image-view
+                    :imageList="goods.mainPictures"
+                  ></xtx-image-view>
+                  <!-- 统计数量 -->
+                  <ul class="goods-sales">
+                    <li>
+                      <p>销量人气</p>
+                      <p>{{ goods.salesCount }}+</p>
+                      <p><i class="iconfont icon-task-filling"></i>销量人气</p>
+                    </li>
+                    <li>
+                      <p>商品评价</p>
+                      <p>{{ goods.commentCount }}+</p>
+                      <p>
+                        <i class="iconfont icon-comment-filling"></i>查看评价
+                      </p>
+                    </li>
+                    <li>
+                      <p>收藏人气</p>
+                      <p>{{ goods.collectCount }}+</p>
+                      <p>
+                        <i class="iconfont icon-favorite-filling"></i>收藏商品
+                      </p>
+                    </li>
+                    <li>
+                      <p>品牌信息</p>
+                      <p>{{ goods.brand.name }}+</p>
+                      <p>
+                        <i class="iconfont icon-dynamic-filling"></i>品牌主页
+                      </p>
                     </li>
                   </ul>
-                  <!-- 图片 -->
-                  <img
-                    v-for="item in goods.details.pictures"
-                    :key="item"
-                    :src="item"
-                    alt=""
-                  />
+                </div>
+                <div class="spec">
+                  <!-- 商品信息区 -->
+                  <p class="g-name">{{ goods.name }}</p>
+                  <p class="g-desc">{{ goods.desc }}</p>
+                  <p class="g-price">
+                    <span>{{ goods.oldPrice }}</span>
+                    <span> {{ goods.price }}</span>
+                  </p>
+                  <div class="g-service">
+                    <dl>
+                      <dt>促销</dt>
+                      <dd>12月好物放送，App领券购买直降120元</dd>
+                    </dl>
+                    <dl>
+                      <dt>服务</dt>
+                      <dd>
+                        <span>无忧退货</span>
+                        <span>快速退款</span>
+                        <span>免费包邮</span>
+                        <a href="javascript:">了解详情</a>
+                      </dd>
+                    </dl>
+                  </div>
+                  <!-- sku组件 -->
+                  <xtx-sku :goods="goods" @change="skuChange"></xtx-sku>
+                  <!-- 数据组件 -->
+                  <el-input-number
+                    v-model="count"
+                    :min="1"
+                    @change="countChange"
+                  ></el-input-number>
+                  <!-- 按钮组件 -->
+                  <div>
+                    <el-button class="btn" size="large" @click="addCart">
+                      加入购物车</el-button
+                    >
+                  </div>
                 </div>
               </div>
-            </div>
-            <!-- 24热榜+专题推荐 -->
-            <div class="goods-aside">
-              <!--24小时-->
-              <detail-hot :type="1"></detail-hot>
-              <!--周-->
-              <detail-hot :type="2"></detail-hot>
+              <div class="goods-footer">
+                <div class="goods-article">
+                  <!-- 商品详情 -->
+                  <div class="goods-tabs">
+                    <nav>
+                      <a>商品详情</a>
+                    </nav>
+                    <div class="goods-detail">
+                      <!-- 属性 -->
+                      <ul class="attrs">
+                        <li
+                          v-for="item in goods.details.properties"
+                          :key="item.value"
+                        >
+                          <span class="dt">{{ item.name }}</span>
+                          <span class="dd">{{ item.value }}</span>
+                        </li>
+                      </ul>
+                      <!-- 图片 -->
+                      <img
+                        v-for="item in goods.details.pictures"
+                        :key="item"
+                        :src="item"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!-- 24热榜+专题推荐 -->
+                <div class="goods-aside">
+                  <!--24小时-->
+                  <detail-hot :type="1"></detail-hot>
+                  <!--周-->
+                  <detail-hot :type="2"></detail-hot>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </el-skeleton>
 </template>
 
 <style lang="scss" scoped>

@@ -1,7 +1,7 @@
 <script setup>
 // tab列表
 import { orderGetOrderList } from '@/apis/order.js'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const tabTypes = [
   { name: 'all', label: '全部订单' },
@@ -45,6 +45,10 @@ const pageChange = (page) => {
   params.value.page = page
   getOrderList()
 }
+
+watch(orderList, (newValue) => {
+  console.log(newValue)
+})
 </script>
 
 <template>
@@ -56,100 +60,117 @@ const pageChange = (page) => {
         :key="item.name"
         :label="item.label"
       />
-
-      <div class="main-container">
-        <div v-if="orderList.length === 0" class="holder-container">
-          <el-empty description="暂无订单数据" />
-        </div>
-        <div v-else>
-          <!-- 订单列表 -->
-          <div v-for="order in orderList" :key="order.id" class="order-item">
-            <div class="head">
-              <span>下单时间：{{ order.createTime }}</span>
-              <span>订单编号：{{ order.id }}</span>
-              <!-- 未付款，倒计时时间还有 -->
-              <span v-if="order.orderState === 1" class="down-time">
-                <i class="iconfont icon-down-time"></i>
-                <b>付款截止: {{ order.countdown }}</b>
-              </span>
-            </div>
-            <div class="body">
-              <div class="column goods">
-                <ul>
-                  <li v-for="item in order.skus" :key="item.id">
-                    <a class="image" href="javascript:">
-                      <img :src="item.image" alt="" />
-                    </a>
-                    <div class="info">
-                      <p class="name ellipsis-2">
-                        {{ item.name }}
-                      </p>
-                      <p class="attr ellipsis">
-                        <span>{{ item.attrsText }}</span>
-                      </p>
-                    </div>
-                    <div class="price">¥{{ item.realPay?.toFixed(2) }}</div>
-                    <div class="count">x{{ item.quantity }}</div>
-                  </li>
-                </ul>
+      <el-skeleton :loading="orderList.length === 0">
+        <template #template>
+          <div
+            style="
+              width: 100%;
+              height: 500px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <div class="loader"></div>
+          </div>
+        </template>
+        <template #default>
+          <div class="main-container">
+            <div>
+              <!-- 订单列表 -->
+              <div
+                v-for="order in orderList"
+                :key="order.id"
+                class="order-item"
+              >
+                <div class="head">
+                  <span>下单时间：{{ order.createTime }}</span>
+                  <span>订单编号：{{ order.id }}</span>
+                  <!-- 未付款，倒计时时间还有 -->
+                  <span v-if="order.orderState === 1" class="down-time">
+                    <i class="iconfont icon-down-time"></i>
+                    <b>付款截止: {{ order.countdown }}</b>
+                  </span>
+                </div>
+                <div class="body">
+                  <div class="column goods">
+                    <ul>
+                      <li v-for="item in order.skus" :key="item.id">
+                        <a class="image" href="javascript:">
+                          <img :src="item.image" alt="" />
+                        </a>
+                        <div class="info">
+                          <p class="name ellipsis-2">
+                            {{ item.name }}
+                          </p>
+                          <p class="attr ellipsis">
+                            <span>{{ item.attrsText }}</span>
+                          </p>
+                        </div>
+                        <div class="price">¥{{ item.realPay?.toFixed(2) }}</div>
+                        <div class="count">x{{ item.quantity }}</div>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="column state">
+                    <p>{{ formatPayState(order.orderState) }}</p>
+                    <p v-if="order.orderState === 3">
+                      <a class="green" href="javascript:">查看物流</a>
+                    </p>
+                    <p v-if="order.orderState === 4">
+                      <a class="green" href="javascript:">评价商品</a>
+                    </p>
+                    <p v-if="order.orderState === 5">
+                      <a class="green" href="javascript:">查看评价</a>
+                    </p>
+                  </div>
+                  <div class="column amount">
+                    <p class="red">¥{{ order.payMoney?.toFixed(2) }}</p>
+                    <p>（含运费：¥{{ order.postFee?.toFixed(2) }}）</p>
+                    <p>在线支付</p>
+                  </div>
+                  <div class="column action">
+                    <el-button
+                      v-if="order.orderState === 1"
+                      size="small"
+                      type="primary"
+                    >
+                      立即付款
+                    </el-button>
+                    <el-button
+                      v-if="order.orderState === 3"
+                      size="small"
+                      type="primary"
+                    >
+                      确认收货
+                    </el-button>
+                    <p><a href="javascript:">查看详情</a></p>
+                    <p v-if="[2, 3, 4, 5].includes(order.orderState)">
+                      <a href="javascript:">再次购买</a>
+                    </p>
+                    <p v-if="[4, 5].includes(order.orderState)">
+                      <a href="javascript:">申请售后</a>
+                    </p>
+                    <p v-if="order.orderState === 1">
+                      <a href="javascript:">取消订单</a>
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div class="column state">
-                <p>{{ formatPayState(order.orderState) }}</p>
-                <p v-if="order.orderState === 3">
-                  <a class="green" href="javascript:">查看物流</a>
-                </p>
-                <p v-if="order.orderState === 4">
-                  <a class="green" href="javascript:">评价商品</a>
-                </p>
-                <p v-if="order.orderState === 5">
-                  <a class="green" href="javascript:">查看评价</a>
-                </p>
-              </div>
-              <div class="column amount">
-                <p class="red">¥{{ order.payMoney?.toFixed(2) }}</p>
-                <p>（含运费：¥{{ order.postFee?.toFixed(2) }}）</p>
-                <p>在线支付</p>
-              </div>
-              <div class="column action">
-                <el-button
-                  v-if="order.orderState === 1"
-                  size="small"
-                  type="primary"
-                >
-                  立即付款
-                </el-button>
-                <el-button
-                  v-if="order.orderState === 3"
-                  size="small"
-                  type="primary"
-                >
-                  确认收货
-                </el-button>
-                <p><a href="javascript:">查看详情</a></p>
-                <p v-if="[2, 3, 4, 5].includes(order.orderState)">
-                  <a href="javascript:">再次购买</a>
-                </p>
-                <p v-if="[4, 5].includes(order.orderState)">
-                  <a href="javascript:">申请售后</a>
-                </p>
-                <p v-if="order.orderState === 1">
-                  <a href="javascript:">取消订单</a>
-                </p>
+              <!-- 分页 -->
+              <div class="pagination-container">
+                <el-pagination
+                  :page-size="params.pageSize"
+                  :total="total"
+                  background
+                  layout="prev, pager, next"
+                  @current-change="pageChange"
+                />
               </div>
             </div>
           </div>
-          <!-- 分页 -->
-          <div class="pagination-container">
-            <el-pagination
-              :page-size="params.pageSize"
-              :total="total"
-              background
-              layout="prev, pager, next"
-              @current-change="pageChange"
-            />
-          </div>
-        </div>
-      </div>
+        </template>
+      </el-skeleton>
     </el-tabs>
   </div>
 </template>
