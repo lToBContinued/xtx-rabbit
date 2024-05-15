@@ -14,16 +14,24 @@ const tabTypes = [
 ]
 // 获取订单列表
 const orderList = ref([])
+const total = ref(0) // 订单总数
 const params = ref({ orderState: 0, page: 1, pageSize: 2 })
 const getOrderList = async () => {
   const res = await orderGetOrderList(params.value)
   orderList.value = res.data.result.items
+  total.value = res.data.result.counts
 }
 getOrderList()
 
 // tab栏切换
 const tabChange = (type) => {
   params.value.orderState = type.index
+  getOrderList()
+}
+
+// 分页器切换
+const pageChange = (page) => {
+  params.value.page = page
   getOrderList()
 }
 </script>
@@ -121,7 +129,13 @@ const tabChange = (type) => {
           </div>
           <!-- 分页 -->
           <div class="pagination-container">
-            <el-pagination background layout="prev, pager, next" />
+            <el-pagination
+              :page-size="params.pageSize"
+              :total="total"
+              background
+              layout="prev, pager, next"
+              @current-change="pageChange"
+            />
           </div>
         </div>
       </div>
