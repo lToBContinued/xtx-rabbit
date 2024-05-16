@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore.js'
 import {
   addressAddAddressService,
+  addressChangeAddressService,
   addressDelAddressService
 } from '@/apis/address.js'
 
@@ -20,7 +21,6 @@ const cartStore = useCartStore()
 
 const getCheckInfo = async () => {
   const res = await checkoutGetCheckInfoService()
-  // console.log(res.data.result)
   checkInfo.value = res.data.result
   // 适配默认地址，在地址列表中筛选出isDefault === 0那一项
   curAddress.value = checkInfo.value.userAddresses.find(
@@ -87,18 +87,44 @@ const addressForm = ref({
   address: '',
   postalCode: '',
   addressTags: '',
-  isDefault: '0',
+  isDefault: 0,
   fullLocation: ''
 })
-const confirmAdd = async () => {
-  await formRef.value.validate()
-  await addressAddAddressService(addressForm.value)
-  ElMessage.success('地址添加成功')
-  await getCheckInfo()
-  addFlag.value = false
+
+// 添加地址和修改地址共用一套表单，判断是添加还是修改
+const isEdit = ref(true)
+const addressId = ref(undefined)
+const toggleFlags = (mode, id) => {
+  addFlag.value = true
+  isEdit.value = mode
+
+  // 修改地址的数据回显
+  if (!isEdit.value) {
+    addressId.value = id
+    addressForm.value = checkInfo.value.userAddresses.find(
+      (item) => item.id === id
+    )
+  }
 }
 
-// 修改地址
+// 添加/修改地址
+const confirmAddress = async () => {
+  // 添加地址
+  if (isEdit.value) {
+    await formRef.value.validate()
+    await addressAddAddressService(addressForm.value)
+    ElMessage.success('地址添加成功')
+    await getCheckInfo()
+    addFlag.value = false
+  } else {
+    // 修改地址
+    await formRef.value.validate()
+    await addressChangeAddressService(addressForm.value, addressId.value)
+    ElMessage.success('地址修改成功')
+    await getCheckInfo()
+    addFlag.value = false
+  }
+}
 
 // 删除地址
 const delAddress = async (id) => {
@@ -159,7 +185,7 @@ const createOrder = async () => {
               <el-button size="large" @click="showDialog = true">
                 切换地址
               </el-button>
-              <el-button size="large" @click="addFlag = true">
+              <el-button size="large" @click="toggleFlags(true)">
                 添加地址
               </el-button>
             </div>
@@ -273,7 +299,12 @@ const createOrder = async () => {
             <span class="delAddress">×</span>
           </template>
         </el-popconfirm>
-        <el-button plain size="small" type="primary" @click="addFlag = true">
+        <el-button
+          plain
+          size="small"
+          type="primary"
+          @click="toggleFlags(false, item.id)"
+        >
           修改地址
         </el-button>
       </div>
@@ -285,7 +316,7 @@ const createOrder = async () => {
       </span>
     </template>
   </el-dialog>
-  <!-- 添加地址 -->
+  <!-- 添加/修改地址 -->
   <el-dialog v-model="addFlag" center title="添加收货地址" width="50%">
     <div class="form">
       <el-form
@@ -325,8 +356,8 @@ const createOrder = async () => {
         </el-form-item>
         <el-form-item label="收货地址是否默认" prop="isDefault">
           <el-radio-group v-model="addressForm.isDefault" class="ml-4">
-            <el-radio size="large" value="0">是</el-radio>
-            <el-radio size="large" value="1">否</el-radio>
+            <el-radio :value="0" size="large">是</el-radio>
+            <el-radio :value="1" size="large">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="完整地址" prop="fullLocation">
@@ -337,7 +368,9 @@ const createOrder = async () => {
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="addFlag = false">取消</el-button>
-        <el-button type="primary" @click="confirmAdd()"> 确定 </el-button>
+        <el-button type="primary" @click="confirmAddress()">
+          {{ isEdit ? '添加' : '修改' }}
+        </el-button>
       </span>
     </template>
   </el-dialog>
