@@ -7,6 +7,10 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore.js'
+import {
+  addressAddAddressService,
+  addressDelAddressService
+} from '@/apis/address.js'
 
 const router = useRouter()
 
@@ -16,6 +20,7 @@ const cartStore = useCartStore()
 
 const getCheckInfo = async () => {
   const res = await checkoutGetCheckInfoService()
+  // console.log(res.data.result)
   checkInfo.value = res.data.result
   // 适配默认地址，在地址列表中筛选出isDefault === 0那一项
   curAddress.value = checkInfo.value.userAddresses.find(
@@ -42,7 +47,35 @@ const confirm = () => {
 // 添加地址表单校验规则
 const formRef = ref(null)
 const rules = {
-  receiver: [{ required: true, message: '姓名不能为空', trigger: 'blur' }]
+  receiver: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
+  contact: [
+    { required: true, message: '联系方式不能为空', trigger: 'blur' },
+    {
+      pattern: /^(?:(?:\+|00)86)?1[3-9]\d{9}$/,
+      message: '请输入正确的手机号',
+      trigger: 'blur'
+    }
+  ],
+  provinceCode: [
+    { required: true, message: '省份编码不能为空', trigger: 'blur' }
+  ],
+  cityCode: [{ required: true, message: '城市编码不能为空', trigger: 'blur' }],
+  countyCode: [
+    { required: true, message: '地区编码不能为空', trigger: 'blur' }
+  ],
+  address: [{ required: true, message: '详细地址不能为空', trigger: 'blur' }],
+  postalCode: [
+    { required: true, message: '邮政编码不能为空', trigger: 'blur' }
+  ],
+  addressTags: [
+    { required: true, message: '邮政编码不能为空', trigger: 'blur' }
+  ],
+  isDefault: [
+    { required: true, message: '请选择是否为默认地址', trigger: 'change' }
+  ],
+  fullLocation: [
+    { required: true, message: '完整地址不能为空', trigger: 'blur' }
+  ]
 }
 // 添加地址
 const addressForm = ref({
@@ -54,11 +87,25 @@ const addressForm = ref({
   address: '',
   postalCode: '',
   addressTags: '',
-  isDefault: 0,
+  isDefault: '0',
   fullLocation: ''
 })
-const confirmAdd = () => {
+const confirmAdd = async () => {
+  await formRef.value.validate()
+  await addressAddAddressService(addressForm.value)
+  ElMessage.success('地址添加成功')
+  await getCheckInfo()
   addFlag.value = false
+}
+
+// 修改地址
+
+// 删除地址
+const delAddress = async (id) => {
+  await addressDelAddressService(id)
+  ElMessage.success('删除地址成功')
+  // 获取最新地址列表
+  await getCheckInfo()
 }
 
 // 提交订单
@@ -216,6 +263,19 @@ const createOrder = async () => {
           <li><span>联系方式：</span>{{ item.contact }}</li>
           <li><span>收货地址：</span>{{ item.fullLocation + item.address }}</li>
         </ul>
+        <el-popconfirm
+          cancel-button-text="取消"
+          confirm-button-text="确定"
+          title="确认要删除地址吗？"
+          @confirm="delAddress(item.id)"
+        >
+          <template #reference>
+            <span class="delAddress">×</span>
+          </template>
+        </el-popconfirm>
+        <el-button plain size="small" type="primary" @click="addFlag = true">
+          修改地址
+        </el-button>
       </div>
     </div>
     <template #footer>
@@ -258,7 +318,10 @@ const createOrder = async () => {
           <el-input v-model="addressForm.postalCode"></el-input>
         </el-form-item>
         <el-form-item label="地址标签" prop="addressTags">
-          <el-input v-model="addressForm.addressTags"></el-input>
+          <el-input
+            v-model="addressForm.addressTags"
+            placeholder="家,学校,公司……"
+          ></el-input>
         </el-form-item>
         <el-form-item label="收货地址是否默认" prop="isDefault">
           <el-radio-group v-model="addressForm.isDefault" class="ml-4">
@@ -271,11 +334,10 @@ const createOrder = async () => {
         </el-form-item>
       </el-form>
     </div>
-
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="addFlag = false">取消</el-button>
-        <el-button type="primary" @click="confirmAdd">确定</el-button>
+        <el-button type="primary" @click="confirmAdd()"> 确定 </el-button>
       </span>
     </template>
   </el-dialog>
@@ -467,6 +529,24 @@ const createOrder = async () => {
 .addressWrapper {
   max-height: 500px;
   overflow-y: auto;
+
+  .text {
+    position: relative;
+
+    .delAddress {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+    }
+
+    .el-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 40px;
+    }
+  }
 }
 
 .text {

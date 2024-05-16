@@ -1,5 +1,6 @@
 import request from '@/utils/request.js'
 
+// 获取订单详细信息
 export const checkoutGetCheckInfoService = () => {
   return request({
     url: '/member/order/pre'
